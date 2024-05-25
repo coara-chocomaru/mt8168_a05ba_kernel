@@ -222,7 +222,7 @@ MINT32 imgsensor_sensor_open(struct IMGSENSOR_SENSOR *psensor)
 			imgsensor_hw_power(&pimgsensor->hw,
 				psensor,
 				IMGSENSOR_HW_POWER_STATUS_OFF);
-			cam_pr_err("SensorOpen fail");
+			cam_pr_err("SensorOpen fail %s",psensor_inst->psensor_name);
 		} else {
 			psensor_inst->state = IMGSENSOR_STATE_OPEN;
 #ifdef CONFIG_MTK_CCU
@@ -522,6 +522,15 @@ static inline int imgsensor_check_is_alive(struct IMGSENSOR_SENSOR *psensor)
 
 	IMGSENSOR_PROFILE_INIT(&psensor_inst->profile_time);
 
+	if(((psensor_inst->psensor_list->id & 0x0f0000) == 0x0f0000) && (psensor_inst->i2c_cfg.pinst->pi2c_client->adapter->nr != 0)) {//front i2c nr 0
+		cam_pr_err("Fail to get sensor ID %x\n", sensorID);
+		err = ERROR_SENSOR_CONNECT_FAIL;
+	}
+	else if(((psensor_inst->psensor_list->id & 0x0f0000) == 0) && (psensor_inst->i2c_cfg.pinst->pi2c_client->adapter->nr == 0)) { //rear i2c nr 1
+		cam_pr_err("Fail to get sensor ID %x\n", sensorID);
+		err = ERROR_SENSOR_CONNECT_FAIL;
+	}
+	else {
 	imgsensor_hw_power(&pimgsensor->hw,
 		psensor,
 		IMGSENSOR_HW_POWER_STATUS_ON);
@@ -529,6 +538,9 @@ static inline int imgsensor_check_is_alive(struct IMGSENSOR_SENSOR *psensor)
 	imgsensor_sensor_feature_control(psensor,
 		SENSOR_FEATURE_CHECK_SENSOR_ID,
 		(MUINT8 *)&sensorID, &retLen);
+
+	cam_pr_debug("sensorID:%x read:%x\n",psensor_inst->psensor_list->id,sensorID);
+	cam_pr_debug("i2c:%d\n",psensor_inst->i2c_cfg.pinst->pi2c_client->adapter->nr);
 
 	/* not implement this feature ID */
 	if (sensorID == 0 || sensorID == 0xFFFFFFFF) {
@@ -544,8 +556,8 @@ static inline int imgsensor_check_is_alive(struct IMGSENSOR_SENSOR *psensor)
 	imgsensor_hw_power(&pimgsensor->hw,
 			psensor,
 			IMGSENSOR_HW_POWER_STATUS_OFF);
+	}
 	IMGSENSOR_PROFILE(&psensor_inst->profile_time, "CheckIsAlive");
-
 	return err ? -EIO : err;
 }
 
@@ -609,7 +621,7 @@ int imgsensor_set_driver(struct IMGSENSOR_SENSOR *psensor)
 		kfree(psensor_list_config);
 	}
 
-#if 1
+#if 0
 	drv_idx = psensor->inst.sensor_idx;
 	if (pSensorList[drv_idx].init) {
 		pSensorList[drv_idx].init(&psensor->pfunc);
@@ -643,9 +655,8 @@ int imgsensor_set_driver(struct IMGSENSOR_SENSOR *psensor)
 	}
 #else
 	for (i = 0; i < MAX_NUM_OF_SUPPORT_SENSOR; i++) {
-		/*pr_debug("orderedSearchList[%d]=%d\n",
-		 *i, orderedSearchList[i]);
-		 */
+		/*pr_debug("orderedSearchList[%d]=%d\n", i, orderedSearchList[i]);*/
+
 		if (orderedSearchList[i] == -1)
 			continue;
 		drv_idx = orderedSearchList[i];
@@ -669,6 +680,7 @@ int imgsensor_set_driver(struct IMGSENSOR_SENSOR *psensor)
 						drv_idx,
 						psensor_inst->psensor_name);
 					ret = drv_idx;
+					orderedSearchList[i] = -1;
 					break;
 				}
 			} else {

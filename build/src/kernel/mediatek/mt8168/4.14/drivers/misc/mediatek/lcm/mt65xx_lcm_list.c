@@ -1114,6 +1114,10 @@ struct LCM_DRIVER *lcm_driver_list[] = {
 #if defined(KD101N92_45NI_A003_DSI)
 	&kd101n92_45ni_a003_dsi_lcm_drv,
 #endif
+
+#if defined(AUO_WUXGA_INCELL_DSI)
+	&auo_wuxga_incell_dsi_lcm_drv,
+#endif
 };
 
 unsigned char lcm_name_list[][128] = {

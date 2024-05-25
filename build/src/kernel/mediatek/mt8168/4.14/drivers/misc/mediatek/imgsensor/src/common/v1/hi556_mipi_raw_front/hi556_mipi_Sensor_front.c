@@ -34,8 +34,7 @@
 #include "hi556_mipi_Sensor.h"
 
 #define PFX "hi556_camera_sensor_front"
-//#define LOG_INF(format, args...)    pr_debug(PFX "[%s] " format, __FUNCTION__, ##args)
-#define LOG_INF(format, args...)    pr_err(PFX "[%s] " format, __FUNCTION__, ##args)
+#define LOG_INF(format, args...)    pr_debug(PFX "[%s] " format, __FUNCTION__, ##args)
 
 static DEFINE_SPINLOCK(imgsensor_drv_lock);
 
@@ -210,7 +209,7 @@ static void set_dummy(void)
 
 static kal_uint32 return_sensor_id(void)
 {
-    return ((read_cmos_sensor(0x0F16) << 8) | read_cmos_sensor(0x0F17) ) + 1;
+    return ((read_cmos_sensor(0x0F16) << 8) | read_cmos_sensor(0x0F17) ) + 0x0f0000;
 }
 
 
@@ -971,7 +970,7 @@ static kal_uint32 open(void)
 {
 	kal_uint8 i = 0;
 	kal_uint8 retry = 2;
-	kal_uint16 sensor_id = 0; 
+	kal_uint32 sensor_id = 0; 
 	LOG_INF("[open]: PLATFORM:MT6737,MIPI 24LANE\n");
 	LOG_INF("preview 1296*972@30fps,360Mbps/lane; capture 2592*1944@30fps,880Mbps/lane\n");
 	while (imgsensor_info.i2c_addr_table[i] != 0xff) {

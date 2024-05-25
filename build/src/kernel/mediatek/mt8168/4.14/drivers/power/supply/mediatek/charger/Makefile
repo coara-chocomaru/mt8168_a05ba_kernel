@@ -24,6 +24,10 @@ subdir-ccflags-y += -I$(srctree)/drivers/misc/mediatek/pmic/include
 subdir-ccflags-y += -I$(srctree)/drivers/misc/mediatek/typec/tcpc/inc
 subdir-ccflags-y += -I$(srctree)/drivers/power/supply/mediatek/misc/
 
+ifeq ($(CONFIG_ARCH_MTK_PROJECT), "a05ba")
+ccflags-y += -DA05BA
+endif
+
 ifeq ($(CONFIG_STS_CHARGER),y)
 obj-y += sts_charger.o
 else

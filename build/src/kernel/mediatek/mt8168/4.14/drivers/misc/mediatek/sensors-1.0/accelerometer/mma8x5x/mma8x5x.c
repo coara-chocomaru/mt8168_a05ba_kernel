@@ -28,6 +28,8 @@
 #include "cust_acc.h"
 #include "accel.h"
 
+#define MMA8X5X_I2C_SLAVE_ADDR 0x3A
+
 /*---------------------------------------------------------------------------*/
 #define DEBUG 1
 /*----------------------------------------------------------------------------*/
@@ -467,6 +469,11 @@ static int mmx8x5x_CheckDeviceID(struct i2c_client *client)
 	int res = 0;
 	int i = 0;
 
+	if(client->addr != (MMA8X5X_I2C_SLAVE_ADDR >> 1))
+	{
+		return -1;
+	}
+
 	res = mpu_i2c_read_block(client, MMA8X5X_WHO_AM_I, &databuf, 0x1);
 	if (res < 0)
 	{
@@ -482,6 +489,8 @@ static int mmx8x5x_CheckDeviceID(struct i2c_client *client)
 
 	return MMA8X5X_ERR_IDENTIFICATION;
 }
+
+static int mmx8x5x_flush(void);
 
 static int mmx8x5x_SetPowerMode(struct i2c_client *client, bool enable)
 {
@@ -522,6 +531,13 @@ static int mmx8x5x_SetPowerMode(struct i2c_client *client, bool enable)
 	}
 
 	sensor_power = enable;
+
+	if (obj_i2c_data->flush) {
+		if (sensor_power)
+			mmx8x5x_flush();
+		else
+			obj_i2c_data->flush = false;
+	}
 
 	return MMA8X5X_SUCCESS;
 }
@@ -960,7 +976,7 @@ static int mmx8x5x_init_client(struct i2c_client *client, bool enable)
 	int res = 0;
 	GSE_FUN();
 	GSE_LOG(" mmx8x5x addr %x!\n",client->addr);
-	printk("!!!!!!!!!!!! mmx8x5x addr %x!\n",client->addr);
+//	printk("!!!!!!!!!!!! mmx8x5x addr %x!\n",client->addr);
 	res = mmx8x5x_CheckDeviceID(client);
 	if(res != MMA8X5X_SUCCESS)
 	{
@@ -1494,7 +1510,6 @@ static int mmx8x5x_i2c_probe(struct i2c_client *client, const struct i2c_device_
 		goto exit_kfree;
 	}
 
-	printk("!!!!!!!!direction: %d\n", obj->hw.direction);
 	obj_i2c_data = obj;
 	obj->client = client;
 	new_client = obj->client;

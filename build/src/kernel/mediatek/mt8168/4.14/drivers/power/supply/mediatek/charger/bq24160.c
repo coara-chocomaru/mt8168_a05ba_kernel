@@ -941,10 +941,17 @@ void bq24160_charge_init(void)
 		bq24160_set_iinlimit(0);//1.5A
 	}
 	bq24160_set_tmr_rst(0x1); /*Kick watchdog*/
+#ifdef A05BA
+	bq24160_set_tmr(0x1);/*6hour*/
+	bq24160_set_iterm(0x2);/*150mA*/
+	bq24160_set_ichrg(0x0a);/*1.3A*/
+	bq24160_set_vbreg(0x27);/*4.28V*/
+#else
 	bq24160_set_tmr(0x2);/*9hour*/
 	bq24160_set_iterm(0x4);/*250mA*/
 	bq24160_set_ichrg(0x0a);/*1.3A*/
 	bq24160_set_vbreg(0x29);/*4.32V*/
+#endif
 	bq24160_set_en_stat(0x1);/*enable*/
 	bq24160_set_ddet_en(1);
 

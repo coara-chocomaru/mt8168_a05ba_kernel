@@ -1436,10 +1436,11 @@ int disp_lcm_resume(struct disp_lcm_handle *plcm)
 	DISPFUNC();
 	if (_is_lcm_inited(plcm)) {
 		lcm_drv = plcm->drv;
-
+#if defined(AUO_WUXGA_INCELL_DSI)
+#else
 		if (lcm_drv->resume_power)
 			lcm_drv->resume_power();
-
+#endif
 
 		if (lcm_drv->resume) {
 			lcm_drv->resume();
@@ -1453,6 +1454,25 @@ int disp_lcm_resume(struct disp_lcm_handle *plcm)
 	DISPERR("lcm_drv is null\n");
 	return -1;
 }
+
+#if defined(AUO_WUXGA_INCELL_DSI)
+int disp_lcm_resume_power(struct disp_lcm_handle *plcm)
+{
+	struct  LCM_DRIVER *lcm_drv = NULL;
+
+	DISPFUNC();
+	if (_is_lcm_inited(plcm)) {
+		lcm_drv = plcm->drv;
+
+		if (lcm_drv->resume_power)
+			lcm_drv->resume_power();
+		return 0;
+	}
+
+	DISPERR("lcm_drv is null\n");
+	return -1;
+}
+#endif
 
 int disp_lcm_aod(struct disp_lcm_handle *plcm, int enter)
 {

@@ -1025,7 +1025,73 @@ struct IMGSENSOR_HW_POWER_SEQ sensor_power_sequence[] = {
 	},
 #endif	
 
+#if defined(OV5675_MIPI_RAW)
+	{
+		SENSOR_DRVNAME_OV5675_MIPI_RAW,
+		{
+			{PDN, Vol_Low, 0},
+			{RST, Vol_Low, 0},
+			{DOVDD, Vol_1800, 0},
+			{AVDD, Vol_2800, 0},
+			{DVDD, Vol_1200, 0},
+			/*{AFVDD, Vol_2800, 0},*/
+			{SensorMCLK, Vol_High, 0},
+			{PDN, Vol_High, 1},
+			{RST, Vol_High, 1}
+		},
+	},
+#endif	
+
+#if defined(OV5675_MIPI_FRONT_RAW)
+	{
+		SENSOR_DRVNAME_OV5675_MIPI_FRONT_RAW,
+		{
+			{PDN, Vol_Low, 0},
+			{RST, Vol_Low, 0},
+			{DOVDD, Vol_1800, 0},
+			{AVDD, Vol_2800, 0},
+			{DVDD, Vol_1200, 0},
+			/*{AFVDD, Vol_2800, 0},*/
+			{SensorMCLK, Vol_High, 0},
+			{PDN, Vol_High, 1},
+			{RST, Vol_High, 1}
+		},
+	},
+#endif	
+#if defined(GC5035_MIPI_RAW)
+	{
+		SENSOR_DRVNAME_GC5035_MIPI_RAW,
+		{
+			{PDN, Vol_Low, 0},
+			{RST, Vol_Low, 0},
+			{DOVDD, Vol_1800, 0},
+			{AVDD, Vol_2800, 0},
+			{DVDD, Vol_1200, 0},
+			/*{AFVDD, Vol_2800, 0},*/
+			{SensorMCLK, Vol_High, 0},
+			{PDN, Vol_High, 1},
+			{RST, Vol_High, 1}
+		},
+	},
+#endif	
+
+#if defined(GC5035_MIPI_FRONT_RAW)
+	{
+		SENSOR_DRVNAME_GC5035_MIPI_FRONT_RAW,
+		{
+			{PDN, Vol_Low, 0},
+			{RST, Vol_Low, 0},
+			{DOVDD, Vol_1800, 0},
+			{AVDD, Vol_2800, 0},
+			{DVDD, Vol_1200, 0},
+			/*{AFVDD, Vol_2800, 0},*/
+			{SensorMCLK, Vol_High, 0},
+			{PDN, Vol_High, 1},
+			{RST, Vol_High, 1}
+		},
+	},
+#endif	
+
 	/* add new sensor before this line */
 	{NULL,},
 };
-

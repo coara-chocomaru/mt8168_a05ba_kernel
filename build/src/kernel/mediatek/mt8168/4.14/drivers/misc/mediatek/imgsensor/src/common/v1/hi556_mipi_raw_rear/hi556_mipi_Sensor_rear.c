@@ -34,8 +34,7 @@
 #include "hi556_mipi_Sensor.h"
 
 #define PFX "hi556_camera_sensor_rear"
-//#define LOG_INF(format, args...)    pr_debug(PFX "[%s] " format, __FUNCTION__, ##args)
-#define LOG_INF(format, args...)    pr_err(PFX "[%s] " format, __FUNCTION__, ##args)
+#define LOG_INF(format, args...)    pr_debug(PFX "[%s] " format, __FUNCTION__, ##args)
 
 static DEFINE_SPINLOCK(imgsensor_drv_lock);
 
@@ -178,8 +177,8 @@ static kal_uint16 read_cmos_sensor(kal_uint32 addr)
 {
 	kal_uint16 get_byte=0;
 	char pu_send_cmd[2] = {(char)(addr >> 8) , (char)(addr & 0xFF) };
-	
-  kdSetI2CSpeed(400); 
+
+	kdSetI2CSpeed(400); 
 
 	iReadRegI2C(pu_send_cmd, 2, (u8*)&get_byte, 1, imgsensor.i2c_write_id);
 
@@ -933,9 +932,9 @@ static kal_uint32 get_imgsensor_id(UINT32 *sensor_id)
 			imgsensor.i2c_write_id = imgsensor_info.i2c_addr_table[i];
 			spin_unlock(&imgsensor_drv_lock);
 			do {
-				*sensor_id =return_sensor_id();
-				if (*sensor_id == imgsensor_info.sensor_id) {				
-					LOG_INF("i2c write id  : 0x%x, sensor id: 0x%x\n", imgsensor.i2c_write_id,*sensor_id);	  
+				*sensor_id = return_sensor_id();
+				if (*sensor_id == imgsensor_info.sensor_id) {
+					LOG_INF("i2c write id  : 0x%x, sensor id: 0x%x\n", imgsensor.i2c_write_id,*sensor_id);
 					return ERROR_NONE;
 				}	
 				LOG_INF("get_imgsensor_id Read sensor id fail, i2c write id: 0x%x,sensor id: 0x%x\n", imgsensor.i2c_write_id,*sensor_id);
@@ -943,7 +942,7 @@ static kal_uint32 get_imgsensor_id(UINT32 *sensor_id)
 			} while(retry > 0);
 			i++;
 			retry = 2;
-}
+	}
 	if (*sensor_id != imgsensor_info.sensor_id) {
 		*sensor_id = 0xFFFFFFFF;
 		return ERROR_SENSOR_CONNECT_FAIL;
@@ -971,7 +970,7 @@ static kal_uint32 open(void)
 {
 	kal_uint8 i = 0;
 	kal_uint8 retry = 2;
-	kal_uint16 sensor_id = 0; 
+	kal_uint32 sensor_id = 0; 
 	LOG_INF("[open]: PLATFORM:MT6737,MIPI 24LANE\n");
 	LOG_INF("preview 1296*972@30fps,360Mbps/lane; capture 2592*1944@30fps,880Mbps/lane\n");
 	while (imgsensor_info.i2c_addr_table[i] != 0xff) {

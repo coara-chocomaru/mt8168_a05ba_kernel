@@ -63,7 +63,11 @@ static struct hrtimer charger_kthread_timer;
 volatile bool fg_init_flag = false;
 volatile bool chg_init_flag = false;
 
+#ifndef A05BA
 #define MAX_CAPA 5660
+#else
+#define MAX_CAPA 4160
+#endif
 
 bool upmu_is_chr_det(void);
 
@@ -746,6 +750,10 @@ static void charger_check_status(struct mt_charger *mt_chg)
 		power_supply_changed(mt_chg->battery_psy);
 }
 
+#ifdef CONFIG_TOUCHSCREEN_NT36XXX
+extern void set_charger_mode(int enable);
+#endif
+
 static int charger_routine_thread(void *data)
 {
 	struct mt_charger *mt_chg = data;
@@ -787,11 +795,17 @@ static int charger_routine_thread(void *data)
 			if (upmu_is_chr_det() == false) {
 //				printk("charger NOT exist!\n");
 				kpoc_power_off_check(mt_chg);
+			#ifdef CONFIG_TOUCHSCREEN_NT36XXX
+				set_charger_mode(0);
+			#endif
 				chg_ini = false;
 				gpio_direction_output(mt_chg->chgled_gpio, 0);
 				__pm_relax(&charger_wakelock);
 			}
 			else {
+			#ifdef CONFIG_TOUCHSCREEN_NT36XXX
+				set_charger_mode(1);
+			#endif
 				if(mt_chg->bat_soc < 100 && get_charger_stat())
 					gpio_direction_output(mt_chg->chgled_gpio, 1);
 				else

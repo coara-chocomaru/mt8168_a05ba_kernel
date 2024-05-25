@@ -1530,6 +1530,11 @@ static int lis3dh_i2c_probe(struct i2c_client *client, const struct i2c_device_i
 
 	GSE_FUN();
 
+	if(client->addr != (LIS3DH_I2C_SLAVE_ADDR >> 1))
+	{
+		return -1;
+	}
+
 	obj = kzalloc(sizeof(*obj), GFP_KERNEL);
 	if (!obj) {
 		err = -ENOMEM;

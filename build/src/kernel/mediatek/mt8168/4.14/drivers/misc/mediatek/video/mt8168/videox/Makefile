@@ -99,3 +99,7 @@ ifeq ($(CONFIG_FREE_FB_BUFFER), y)
 endif
 
 ccflags-$(CONFIG_MTK_LCM_DEVICE_TREE_SUPPORT) += -DMTK_LCM_DEVICE_TREE_SUPPORT
+
+LCM_DEFINES := $(shell echo $(CONFIG_CUSTOM_KERNEL_LCM) | tr a-z A-Z)
+DEFINES += $(foreach LCM,$(LCM_DEFINES),$(LCM))
+ccflags-$(CONFIG_MTK_LCM) += $(addprefix -D, $(DEFINES))

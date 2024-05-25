@@ -57,8 +57,13 @@
 #define LC709203F_NUM_OF_THE_PARAM	0x1A
 
 #define RESCALE_SOC
+#ifndef A05BA
 #define INDI_TOP			940
 #define INDI_BOTTOM			100
+#else
+#define INDI_TOP			900
+#define INDI_BOTTOM			200
+#endif
 #define INDI_BOTTOM_HICHARGE 50
 
 #define EMPTYSOC  10  /*  1% */

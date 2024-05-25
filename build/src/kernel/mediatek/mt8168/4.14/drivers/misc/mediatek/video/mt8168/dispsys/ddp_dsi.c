@@ -484,8 +484,10 @@ static void _DSI_INTERNAL_IRQ_Handler(enum DISP_MODULE_ENUM module,
 	i = DSI_MODULE_to_ID(module);
 	status = *(struct DSI_INT_STATUS_REG *)(&param);
 
-	if (status.RD_RDY)
+	if (status.RD_RDY) {
+		DSI_OUTREGBIT(NULL, struct DSI_INT_STATUS_REG, DSI_REG[i]->DSI_INTSTA, RD_RDY, 0);
 		_set_condition_and_wake_up(&(_dsi_context[i].read_wq));
+	}
 
 	if (status.CMD_DONE)
 		wake_up(&(_dsi_context[i].cmddone_wq.wq));
